@@ -7,12 +7,24 @@ public class ShooterScript : MonoBehaviour
     [SerializeField]
     private GameObject gunPoint;
     public Camera cam;
-    [SerializeField]
-    private GameObject enemie;
-    
+    public GameObject bullet;
+    public GameObject gun;
+    public float bulletSpeed = 500f;
+    private bool isShooting;
     void Start()
     {
+        isShooting = false;
+    }
 
+    IEnumerator Shoot()
+    {
+        isShooting = true;
+        GameObject localBullet = Instantiate(bullet, gunPoint.transform.position, Quaternion.identity);
+        Rigidbody rb = localBullet.GetComponent<Rigidbody>();
+        rb.AddForce(gunPoint.transform.forward * bulletSpeed);
+        //Destroy(localBullet,1);
+        yield return new WaitForSeconds(1f);
+        isShooting = false;
     }
 
     void Update()
@@ -23,9 +35,12 @@ public class ShooterScript : MonoBehaviour
             if (hit.collider.gameObject.tag == "enemy")
             {
                 Debug.DrawRay(this.transform.position, this.transform.forward, Color.green);
-                Debug.Log("is here");
-               // enemie.SetActive(false);
+                if (!isShooting)
+                {
+                    StartCoroutine("Shoot");
+                    Destroy(hit.collider.gameObject);
 
+                }
             }
         }
     }

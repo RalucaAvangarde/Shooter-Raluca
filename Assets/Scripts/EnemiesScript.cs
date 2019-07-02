@@ -1,21 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemiesScript : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject enemy;
-    [SerializeField]
-    private Transform container;
-   
+    private Transform player;
+    private NavMeshAgent agent;
 
-    public void InstatiateEnemy(int nr)
+    public void Start()
     {
-        var position = new Vector3(Random.Range(-15, 5), 0 , Random.Range(-15, 20));
-        for (int i = 0; i < nr; i++)
-        {
-            Instantiate(enemy, position, Quaternion.identity,container); 
-        }
+        player = Camera.main.transform;
+        agent = GetComponent<NavMeshAgent>();
+        agent.destination =player.position;
+    }
+
+    private void OnTriggerEnter(Collider col)
+    {
+        Debug.Log("hit");
+        GetComponent<CapsuleCollider>().enabled = false;
+
+        Destroy(col.gameObject);
+
+        agent.destination = gameObject.transform.position;
+
+        Destroy(gameObject, 6);
     }
 }
