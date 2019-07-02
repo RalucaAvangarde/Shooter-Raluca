@@ -1,16 +1,21 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ShooterScript : MonoBehaviour
 {
     [SerializeField]
     private GameObject gunPoint;
-    public Camera cam;
-    public GameObject bullet;
-    public GameObject gun;
-    public float bulletSpeed = 500f;
+    
+    [SerializeField]
+    private Camera cam;
+    [SerializeField]
+    private GameObject bullet;
+    [SerializeField]
+    private GameObject gun;
+    [SerializeField]
+    private float bulletSpeed = 500f;
     private bool isShooting;
+
     void Start()
     {
         isShooting = false;
@@ -41,6 +46,7 @@ public class ShooterScript : MonoBehaviour
                     Destroy(hit.collider.gameObject);
 
                 }
+                
             }
         }
     }
