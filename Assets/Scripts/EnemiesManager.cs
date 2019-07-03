@@ -16,8 +16,9 @@ public class EnemiesManager : MonoBehaviour
     private float spawninterval;
     [SerializeField]
     private float nextspawn;
-    public LayerMask mask;
-    private Collider[] Colliders;
+    [SerializeField]
+    private LayerMask mask;
+    private Collider[] colliders;
 
     void Start()
     {
@@ -44,9 +45,6 @@ public class EnemiesManager : MonoBehaviour
         while (!canInstantiate)
         {
 
-            //var instantiateZ = Random.Range(-15f, 20f);
-            //var instantiateX = this.transform.position.y + Random.Range(-15f, 5f);
-            //spawnPos = new Vector3(instantiateX, 0, instantiateZ);
             spawnPos = new Vector3(portal2.position.x, 0, 0);
             spawnPos2 = new Vector3(portal1.position.x, 0, portal1.position.z);
             canInstantiate = PreventOverlap(spawnPos);
@@ -63,13 +61,13 @@ public class EnemiesManager : MonoBehaviour
  
     public bool PreventOverlap(Vector3 spawnPos)
     {
-        Colliders = Physics.OverlapSphere(spawnPos, radius, mask);
+        colliders = Physics.OverlapSphere(spawnPos, radius, mask);
 
-        for (int i = 0; i < Colliders.Length; i++)
+        for (int i = 0; i < colliders.Length; i++)
         {
-            Vector3 centerPoint = Colliders[i].bounds.center;
-            float width = Colliders[i].bounds.extents.z;
-            float height = Colliders[i].bounds.extents.y;
+            Vector3 centerPoint = colliders[i].bounds.center;
+            float width = colliders[i].bounds.extents.z;
+            float height = colliders[i].bounds.extents.y;
 
             float leftExtent = centerPoint.z - width * 4;
             float rightExtent = centerPoint.z + width * 4;

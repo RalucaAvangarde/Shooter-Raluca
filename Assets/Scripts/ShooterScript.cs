@@ -1,53 +1,57 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ShooterScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject gunPoint;
-    
-    [SerializeField]
     private Camera cam;
     [SerializeField]
-    private GameObject bullet;
+    private float range = 100f;
     [SerializeField]
-    private GameObject gun;
+    private float damage = 10f;
     [SerializeField]
-    private float bulletSpeed = 500f;
-    private bool isShooting;
+    private ParticleSystem flash;
+    [SerializeField]
+    private GameObject impactParticle;
+    private PlayerManager playerManager;
 
     void Start()
     {
-        isShooting = false;
-    }
-
-    IEnumerator Shoot()
-    {
-        isShooting = true;
-        GameObject localBullet = Instantiate(bullet, gunPoint.transform.position, Quaternion.identity);
-        Rigidbody rb = localBullet.GetComponent<Rigidbody>();
-        rb.AddForce(gunPoint.transform.forward * bulletSpeed);
-        //Destroy(localBullet,1);
-        yield return new WaitForSeconds(1f);
-        isShooting = false;
+        playerManager = cam.transform.GetComponent<PlayerManager>();
     }
 
     void Update()
     {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Shoot();
+            playerManager.ScoreText.text = playerManager.score.ToString() + " Kills";
+        }
+        playerManager.LifeText.text = playerManager.hp.ToString() + " HP";
+    }
+  
+    void Shoot()
+    {
+        flash.Play();
         RaycastHit hit;
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 1000))
+
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, range))
         {
             if (hit.collider.gameObject.tag == "enemy")
             {
-                Debug.DrawRay(this.transform.position, this.transform.forward, Color.green);
-                if (!isShooting)
+                EnemiesScript target = hit.transform.GetComponent<EnemiesScript>();
+                if (target != null)
                 {
-                    StartCoroutine("Shoot");
-                    Destroy(hit.collider.gameObject);
-
+                    target.GetDamage(damage, ref playerManager.score);
                 }
-                
+
+                GameObject hitEffect = Instantiate(impactParticle, hit.point, Quaternion.LookRotation(hit.normal));
+                Destroy(hitEffect, 2f);
             }
         }
+
     }
+    
+    
 }
+
+
